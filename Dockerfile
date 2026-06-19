@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir \
 
 # Model einbaken (~8 GB)
 RUN mkdir -p /app/models/original && \
-    huggingface-cli download mistralai/Voxtral-4B-TTS-2603 \
+    hf download mistralai/Voxtral-4B-TTS-2603 \
     --local-dir /app/models/original
 
 # App code
