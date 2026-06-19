@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Python deps — PyTorch CUDA 12.4 + torchao + hqq + FastAPI
 RUN pip install --no-cache-dir \
-    torch --index-url https://download.pytorch.org/whl/cu124 \
-    torchao hqq safetensors soundfile numpy \
-    fastapi uvicorn huggingface_hub
+    torch torchao --index-url https://download.pytorch.org/whl/cu124 \
+    && pip install --no-cache-dir \
+    hqq safetensors soundfile numpy fastapi uvicorn huggingface_hub
 
 # Model einbaken (~8 GB)
 RUN mkdir -p /app/models/original && \
