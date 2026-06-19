@@ -1,0 +1,19 @@
+apiVersion: v2
+name: aimvoxtral4tts
+description: AIM Voxtral 4B TTS — Mistral Voxtral-4B-TTS int4 HQQ quantized, OpenAI-compatible /v1/audio/speech
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - tts
+  - text-to-speech
+  - voxtral
+  - mistral
+  - nvidia
+home: https://github.com/bayerhazard/aimighty-voxtral-tts
+sources:
+  - https://github.com/bayerhazard/aimighty-voxtral-tts
+maintainers:
+  - name: Aimighty
+    email: admin@aimighty.local

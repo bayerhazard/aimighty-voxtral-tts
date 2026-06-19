@@ -1,0 +1,81 @@
+---
+olaresManifest.version: '0.10.0'
+olaresManifest.type: app
+apiVersion: 'v2'
+metadata:
+  name: aimvoxtral4tts
+  icon: https://raw.githubusercontent.com/bayerhazard/aimighty-voxtral-tts/main/icon.png
+  description: Mistral Voxtral 4B TTS int4 — OpenAI-compatible /v1/audio/speech
+  appid: aimvoxtral4tts
+  title: AIM Voxtral 4B TTS
+  version: '1.0.0'
+  categories:
+    - AI
+    - Developer Tools
+entrances:
+  - name: aimvoxtral4tts
+    port: 8080
+    host: aimvoxtral4tts
+    title: Voxtral TTS Dashboard
+    icon: https://raw.githubusercontent.com/bayerhazard/aimighty-voxtral-tts/main/icon.png
+    openMethod: window
+    authLevel: internal
+spec:
+  versionName: '1.0.0'
+  upgradeDescription: |
+    v1.0.0: Initial release. Mistral Voxtral-4B-TTS with int4 HQQ quantization (3.8 GB VRAM). OpenAI-compatible /v1/audio/speech + /v1/models endpoints. Web dashboard for testing. 20 voices across 9 languages.
+  fullDescription: |
+    **Voxtral-4B-TTS** — Mistral's frontier text-to-speech model, int4 quantized for efficient GPU inference.
+
+    **Model**
+    Mistral Voxtral-4B-TTS-2603, quantized to int4 via torchao + HQQ algorithm. Near-lossless quality at 54% VRAM reduction (3.8 GB vs 8 GB BF16).
+
+    **Inference Engine**
+    Custom PyTorch inference with torch.compile optimization. 57 fps audio token generation on RTX 3090/4090/5090.
+
+    **Key Features**
+    - OpenAI-compatible API: /v1/audio/speech, /v1/models, /v1/audio/voices
+    - 20 preset voices across 9 languages (EN, FR, ES, DE, IT, PT, NL, AR, HI)
+    - 48 kHz audio output in WAV format
+    - Long text auto-batching (1000 char segments)
+    - Web dashboard for quick testing
+    - Classifier-Free Guidance (cfg_alpha=1.2) for quality
+
+    **Resource Usage**
+    GPU: 1× NVIDIA (3.8 GB VRAM, RTX 3090/4090/5090)
+    RAM: 4-12 GB
+    CPU: 2-4 cores
+    Disk: 15 GB (model pre-baked in image)
+
+    **API Example**
+    ```bash
+    curl -X POST http://localhost:8000/v1/audio/speech \
+      -H "Content-Type: application/json" \
+      -d '{"input": "Hello world!", "voice": "neutral_female"}' \
+      -o output.wav
+    ```
+
+    **Note:** Model weights are CC-BY-NC-4.0 (non-commercial use only).
+  developer: Aimighty
+  website: https://github.com/bayerhazard/aimighty-voxtral-tts
+  sourceCode: https://github.com/bayerhazard/aimighty-voxtral-tts
+  locale:
+    - en-US
+  supportArch:
+    - amd64
+  limitedCpu: 4
+  requiredCpu: 2
+  requiredMemory: 4Gi
+  limitedMemory: 12Gi
+  requiredDisk: 15Gi
+  requiredGpu: 1Gi
+  limitedGpu: 24Gi
+permission:
+  appData: true
+options:
+  apiTimeout: 300
+  dependencies:
+    - name: olares
+      version: '>=1.12.2-0'
+      type: system
+  allowMultipleInstall: false

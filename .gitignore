@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.DS_Store
+*.wav
+models/
+venv/
+.wenv/
+*.tgz
+.helmignore

@@ -1,0 +1,342 @@
+# --- Document 1: Dashboard ConfigMap (nginx.conf + index.html) ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aimvoxtral4tts-dashboard
+  namespace: {{ .Release.Namespace }}
+data:
+  nginx.conf: |
+    events { worker_connections 64; }
+    http {
+      log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent"';
+      access_log /dev/stdout main;
+      error_log /dev/stderr warn;
+      sendfile on;
+      tcp_nopush on;
+      keepalive_timeout 65;
+      gzip on;
+      gzip_types text/html text/css application/javascript;
+
+      upstream tts_api {
+        server 127.0.0.1:{{ .Values.apiPort }};
+      }
+
+      server {
+        listen {{ .Values.dashboardPort }};
+        server_name _;
+
+        location / {
+          root /usr/share/nginx/html;
+          index index.html;
+          try_files $uri $uri/ /index.html;
+        }
+
+        location /v1/ {
+          proxy_pass http://tts_api;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_read_timeout 300s;
+          proxy_send_timeout 300s;
+          proxy_connect_timeout 30s;
+        }
+
+        location /health {
+          proxy_pass http://tts_api;
+          proxy_set_header Host $host;
+        }
+
+        location /speak {
+          proxy_pass http://tts_api;
+          proxy_set_header Host $host;
+          proxy_read_timeout 300s;
+        }
+      }
+    }
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Voxtral TTS</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          background: #0f0f0f; color: #e0e0e0; min-height: 100vh;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .container {
+          width: 100%; max-width: 640px; padding: 2rem;
+        }
+        h1 {
+          font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem;
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        textarea {
+          width: 100%; height: 120px; padding: 0.75rem; border-radius: 8px;
+          border: 1px solid #333; background: #1a1a1a; color: #e0e0e0;
+          font-size: 0.95rem; resize: vertical; outline: none;
+          transition: border-color 0.2s;
+        }
+        textarea:focus { border-color: #6366f1; }
+        .controls {
+          display: flex; gap: 0.75rem; margin-top: 1rem; align-items: center;
+        }
+        select {
+          flex: 1; padding: 0.6rem 0.75rem; border-radius: 8px;
+          border: 1px solid #333; background: #1a1a1a; color: #e0e0e0;
+          font-size: 0.9rem; outline: none; cursor: pointer;
+        }
+        select:focus { border-color: #6366f1; }
+        button {
+          padding: 0.6rem 1.5rem; border-radius: 8px; border: none;
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          color: #fff; font-size: 0.9rem; font-weight: 500;
+          cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
+        }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status {
+          margin-top: 1rem; font-size: 0.85rem; color: #888;
+          min-height: 1.5rem;
+        }
+        .status.error { color: #ef4444; }
+        .status.success { color: #22c55e; }
+        audio {
+          width: 100%; margin-top: 1rem; border-radius: 8px;
+        }
+        .health {
+          margin-top: 2rem; padding: 0.75rem; border-radius: 8px;
+          background: #1a1a1a; border: 1px solid #333;
+          font-size: 0.8rem; color: #888;
+        }
+        .health span { color: #22c55e; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Voxtral 4B TTS</h1>
+        <p class="subtitle">Mistral Voxtral — int4 HQQ, 20 voices, 9 languages</p>
+
+        <textarea id="textInput" placeholder="Enter text to synthesize...">Hello, this is a test of Voxtral text-to-speech.</textarea>
+
+        <div class="controls">
+          <select id="voiceSelect">
+            <option value="neutral_female">EN — neutral_female</option>
+            <option value="neutral_male">EN — neutral_male</option>
+            <option value="cheerful_female">EN — cheerful_female</option>
+            <option value="casual_female">EN — casual_female</option>
+            <option value="casual_male">EN — casual_male</option>
+            <option value="de_female">DE — de_female</option>
+            <option value="de_male">DE — de_male</option>
+            <option value="fr_female">FR — fr_female</option>
+            <option value="fr_male">FR — fr_male</option>
+            <option value="es_female">ES — es_female</option>
+            <option value="es_male">ES — es_male</option>
+            <option value="it_female">IT — it_female</option>
+            <option value="it_male">IT — it_male</option>
+            <option value="pt_female">PT — pt_female</option>
+            <option value="pt_male">PT — pt_male</option>
+            <option value="nl_female">NL — nl_female</option>
+            <option value="nl_male">NL — nl_male</option>
+            <option value="ar_female">AR — ar_female</option>
+            <option value="ar_male">AR — ar_male</option>
+            <option value="hi_female">HI — hi_female</option>
+            <option value="hi_male">HI — hi_male</option>
+          </select>
+          <button id="generateBtn" onclick="generateSpeech()">Generate</button>
+        </div>
+
+        <div class="status" id="status"></div>
+        <div id="audioContainer"></div>
+
+        <div class="health" id="healthInfo">Checking health...</div>
+      </div>
+
+      <script>
+        const statusEl = document.getElementById('status');
+        const audioContainer = document.getElementById('audioContainer');
+
+        async function checkHealth() {
+          try {
+            const res = await fetch('/health');
+            const data = await res.json();
+            document.getElementById('healthInfo').innerHTML =
+              'Status: <span>OK</span> | VRAM: ' + data.vram_gb + ' GB';
+          } catch (e) {
+            document.getElementById('healthInfo').innerHTML =
+              'Status: <span style="color:#ef4444">UNREACHABLE</span>';
+          }
+        }
+
+        async function generateSpeech() {
+          const text = document.getElementById('textInput').value.trim();
+          const voice = document.getElementById('voiceSelect').value;
+          const btn = document.getElementById('generateBtn');
+
+          if (!text) {
+            statusEl.className = 'status error';
+            statusEl.textContent = 'Please enter some text.';
+            return;
+          }
+
+          btn.disabled = true;
+          statusEl.className = 'status';
+          statusEl.textContent = 'Generating...';
+          audioContainer.innerHTML = '';
+
+          try {
+            const res = await fetch('/v1/audio/speech', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ input: text, voice: voice })
+            });
+
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.detail || `HTTP ${res.status}`);
+            }
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+
+            audioContainer.innerHTML =
+              '<audio controls autoplay src="' + url + '"></audio>';
+            statusEl.className = 'status success';
+            statusEl.textContent = 'Done! (' + (blob.size / 1024).toFixed(0) + ' KB)';
+          } catch (e) {
+            statusEl.className = 'status error';
+            statusEl.textContent = 'Error: ' + e.message;
+          } finally {
+            btn.disabled = false;
+          }
+        }
+
+        checkHealth();
+        setInterval(checkHealth, 30000);
+      </script>
+    </body>
+    </html>
+---
+# --- Document 2: Deployment ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aimvoxtral4tts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: aimvoxtral4tts
+    applications.app.bytetrade.io/name: aimvoxtral4tts
+    applications.app.bytetrade.io/owner: {{ .Release.Namespace | trimSuffix "-aimighty" }}
+    applications.app.bytetrade.io/raw-app-name: aimvoxtral4tts
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: aimvoxtral4tts
+  strategy:
+    type: {{ .Values.strategy.type }}
+  template:
+    metadata:
+      labels:
+        app: aimvoxtral4tts
+        applications.app.bytetrade.io/name: aimvoxtral4tts
+        applications.app.bytetrade.io/owner: {{ .Release.Namespace | trimSuffix "-aimighty" }}
+        applications.app.bytetrade.io/raw-app-name: aimvoxtral4tts
+        io.bytetrade.app: "true"
+    spec:
+      initContainers:
+      - name: fix-kubelet-bypass
+        image: beclab/init:v1.2.3
+        command:
+        - sh
+        - -c
+        - |
+          for cidr in {{ range .Values.kubeletCidrs }}{{ . }}{{ "," }}{{ end }}; do
+            iptables -t nat -I OUTPUT -d $cidr -p tcp --dport 10250 -j DNAT --to-destination 127.0.0.1:10250
+          done
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+          privileged: true
+      containers:
+      # Container 1: Voxtral TTS API
+      - name: aimvoxtral4tts
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["python"]
+        args:
+        - src/serve.py
+        - --model-dir
+        - {{ .Values.serveArgs.modelDir }}
+        - --port
+        - {{ .Values.serveArgs.port | quote }}
+        - --host
+        - {{ .Values.serveArgs.host }}
+        - --flow-steps
+        - {{ .Values.serveArgs.flowSteps | quote }}
+        {{- if eq .Values.serveArgs.noCompile "true" }}
+        - --no-compile
+        {{- end }}
+        env:
+        - name: MODEL_DIR
+          value: {{ .Values.env.MODEL_DIR }}
+        - name: FLOW_STEPS
+          value: {{ .Values.env.FLOW_STEPS }}
+        - name: HUGGINGFACE_HUB_CACHE
+          value: /app/models
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        ports:
+        - containerPort: {{ .Values.apiPort }}
+          name: api
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        startupProbe:
+          {{- toYaml .Values.startupProbe | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
+
+      # Container 2: nginx Dashboard
+      - name: nginx
+        image: "{{ .Values.nginx.image }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.dashboardPort }}
+          name: dashboard
+        resources:
+          {{- toYaml .Values.nginxResources | nindent 10 }}
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: dashboard-html
+          mountPath: /usr/share/nginx/html
+
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: {{ .Values.volumes.dshm.sizeLimit }}
+      - name: nginx-config
+        configMap:
+          name: aimvoxtral4tts-dashboard
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      - name: dashboard-html
+        configMap:
+          name: aimvoxtral4tts-dashboard
