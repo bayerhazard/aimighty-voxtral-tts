@@ -1,6 +1,6 @@
 image:
-  repository: ghcr.io/bayerhazard/aimighty-voxtral-tts
-  tag: "1.0.0"
+  repository: docker.io/bayerhazard/aimighty-voxtral-tts
+  tag: "1.0.4"
   pullPolicy: IfNotPresent
 nginx:
   image: nginx:alpine
@@ -13,11 +13,11 @@ strategy:
 resources:
   limits:
     cpu: "4"
-    memory: 12Gi
+    memory: 32Gi
     nvidia.com/gpu: "1"
   requests:
     cpu: "2"
-    memory: 4Gi
+    memory: 16Gi
 nginxResources:
   limits:
     cpu: 200m

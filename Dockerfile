@@ -4,9 +4,9 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl && rm -rf /var/lib/apt/lists/*
 
-# Python deps — PyTorch CUDA 12.4 + torchao + hqq + FastAPI
+# Python deps — PyTorch CUDA 12.8 (sm_120 support for RTX 5090 Laptop Blackwell) + torchao + hqq + FastAPI
 RUN pip install --no-cache-dir \
-    torch torchao --index-url https://download.pytorch.org/whl/cu124 \
+    torch torchao==0.17.0+cu128 --index-url https://download.pytorch.org/whl/cu128 \
     && pip install --no-cache-dir \
     hqq safetensors soundfile numpy fastapi uvicorn huggingface_hub
 

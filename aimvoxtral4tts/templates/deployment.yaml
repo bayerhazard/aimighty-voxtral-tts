@@ -260,7 +260,7 @@ spec:
         - sh
         - -c
         - |
-          for cidr in {{ range .Values.kubeletCidrs }}{{ . }}{{ "," }}{{ end }}; do
+          for cidr in {{ join "," .Values.kubeletCidrs }}; do
             iptables -t nat -I OUTPUT -d $cidr -p tcp --dport 10250 -j DNAT --to-destination 127.0.0.1:10250
           done
         securityContext:
@@ -288,9 +288,9 @@ spec:
         {{- end }}
         env:
         - name: MODEL_DIR
-          value: {{ .Values.env.MODEL_DIR }}
+          value: {{ .Values.env.MODEL_DIR | quote }}
         - name: FLOW_STEPS
-          value: {{ .Values.env.FLOW_STEPS }}
+          value: {{ .Values.env.FLOW_STEPS | quote }}
         - name: HUGGINGFACE_HUB_CACHE
           value: /app/models
         - name: PYTHONUNBUFFERED

@@ -8,7 +8,7 @@ metadata:
   description: Mistral Voxtral 4B TTS int4 — OpenAI-compatible /v1/audio/speech
   appid: aimvoxtral4tts
   title: AIM Voxtral 4B TTS
-  version: '1.0.0'
+  version: '1.0.6'
   categories:
     - AI
     - Developer Tools
@@ -21,9 +21,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.0.0'
+  versionName: '1.0.6'
   upgradeDescription: |
-    v1.0.0: Initial release. Mistral Voxtral-4B-TTS with int4 HQQ quantization (3.8 GB VRAM). OpenAI-compatible /v1/audio/speech + /v1/models endpoints. Web dashboard for testing. 20 voices across 9 languages.
+    v1.0.5: Upgraded to PyTorch 2.12.1+cu126 (sm_120 support for RTX 5090 Laptop) + torchao 0.17.0. Fixed "no kernel image available" CUDA error.
   fullDescription: |
     **Voxtral-4B-TTS** — Mistral's frontier text-to-speech model, int4 quantized for efficient GPU inference.
 
@@ -65,8 +65,8 @@ spec:
     - amd64
   limitedCpu: 4
   requiredCpu: 2
-  requiredMemory: 4Gi
-  limitedMemory: 12Gi
+  requiredMemory: 16Gi
+  limitedMemory: 32Gi
   requiredDisk: 15Gi
   requiredGpu: 1Gi
   limitedGpu: 24Gi

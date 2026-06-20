@@ -30,14 +30,12 @@ def _apply_torchao_int4(model, group_size=64):
     """Apply torchao int4 quantization with HQQ algorithm to backbone only."""
     from torchao.quantization import quantize_, Int4WeightOnlyConfig
     from torchao.quantization.quantize_.workflows.int4.int4_packing_format import Int4PackingFormat
-
-    algo_type = type(Int4WeightOnlyConfig().int4_choose_qparams_algorithm)
-    HQQ_ALGO = algo_type['HQQ']
+    from torchao.quantization.quantize_.workflows.int4.int4_choose_qparams_algorithm import Int4ChooseQParamsAlgorithm
 
     quantize_(model.backbone, Int4WeightOnlyConfig(
         group_size=group_size,
         int4_packing_format=Int4PackingFormat.TILE_PACKED_TO_4D,
-        int4_choose_qparams_algorithm=HQQ_ALGO,
+        int4_choose_qparams_algorithm=Int4ChooseQParamsAlgorithm.HQQ,
     ))
 
 
