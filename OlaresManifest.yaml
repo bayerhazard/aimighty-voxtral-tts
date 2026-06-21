@@ -8,7 +8,7 @@ metadata:
   description: Mistral Voxtral 4B TTS int4 — OpenAI-compatible /v1/audio/speech
   appid: aimvoxtral4tts
   title: AIM Voxtral 4B TTS
-  version: '1.0.7'
+  version: '1.0.8'
   categories:
     - AI
     - Developer Tools
@@ -21,7 +21,7 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.0.7'
+  versionName: '1.0.8'
   upgradeDescription: |
     v1.0.5: Upgraded to PyTorch 2.12.1+cu126 (sm_120 support for RTX 5090 Laptop) + torchao 0.17.0. Fixed "no kernel image available" CUDA error.
   fullDescription: |
