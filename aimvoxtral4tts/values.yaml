@@ -1,6 +1,6 @@
 image:
   repository: docker.io/bayerhazard/aimighty-voxtral-tts
-  tag: "1.0.4"
+  tag: "1.0.5"
   pullPolicy: IfNotPresent
 nginx:
   image: nginx:alpine

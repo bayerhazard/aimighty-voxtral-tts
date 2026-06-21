@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --no-cache-dir \
     torch torchao==0.17.0+cu128 --index-url https://download.pytorch.org/whl/cu128 \
     && pip install --no-cache-dir \
-    hqq safetensors soundfile numpy fastapi uvicorn huggingface_hub
+    hqq safetensors soundfile numpy fastapi uvicorn huggingface_hub tiktoken
 
 # Model einbaken (~8 GB)
 RUN mkdir -p /app/models/original && \

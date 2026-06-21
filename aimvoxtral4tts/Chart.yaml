@@ -2,7 +2,7 @@ apiVersion: v2
 name: aimvoxtral4tts
 description: AIM Voxtral 4B TTS — Mistral Voxtral-4B-TTS int4 HQQ quantized, OpenAI-compatible /v1/audio/speech
 type: application
-version: 1.0.6
+version: 1.0.7
 appVersion: "1.0.5"
 keywords:
   - ai
