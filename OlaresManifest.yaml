@@ -7,15 +7,15 @@ metadata:
   icon: https://raw.githubusercontent.com/bayerhazard/aimighty-voxtral-tts/main/icon.png
   description: Mistral Voxtral 4B TTS int4 — OpenAI-compatible /v1/audio/speech
   appid: aimvoxtral4tts
-  title: AIM Voxtral 4B TTS
-  version: '1.0.9'
+   title: Voxtral 4B
+  version: '1.0.10'
   categories:
     - Audio
 entrances:
   - name: aimvoxtral4tts
     port: 8080
     host: aimvoxtral4tts
-    title: Voxtral TTS Dashboard
+    title: Voxtral 4B
     icon: https://raw.githubusercontent.com/bayerhazard/aimighty-voxtral-tts/main/icon.png
     openMethod: window
     authLevel: internal
