@@ -8,10 +8,9 @@ metadata:
   description: Mistral Voxtral 4B TTS int4 — OpenAI-compatible /v1/audio/speech
   appid: aimvoxtral4tts
   title: AIM Voxtral 4B TTS
-  version: '1.0.8'
+  version: '1.0.9'
   categories:
-    - AI
-    - Developer Tools
+    - Audio
 entrances:
   - name: aimvoxtral4tts
     port: 8080
